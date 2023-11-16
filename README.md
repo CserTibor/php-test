@@ -1,4 +1,4 @@
-# NeoSoft PHP Test
+# PHP Test
 
 ## Launch project in local
 
