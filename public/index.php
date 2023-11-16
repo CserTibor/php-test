@@ -1,13 +1,17 @@
 <?php
 
 use App\Controllers\AuthController;
+use App\Models\Auth;
 use App\Models\Session;
+use App\Views\JsonResponse;
 
 require('../Connection.php');
 
 require('../Models/Auth.php');
 require('../Models/Session.php');
 require('../Models/User.php');
+
+require('../Views/JsonResponse.php');
 
 require('../Controllers/AuthController.php');
 
@@ -19,14 +23,14 @@ require('../helpers.php');
 
 function authMiddlewareHandle(): void
 {
-    $session = Session::get(getBearer());
+    $session = Session::get(Auth::getBearer());
 
     if (!$session) {
-        jsonResponse(['error' => 'Unauthorized!'], 401);
+        JsonResponse::response(['error' => 'Unauthorized!'], 401);
     }
 
     if (strtotime($session->getExpiresAt()) < time()) {
-        jsonResponse(['error' => 'Unauthorized!'], 401);
+        JsonResponse::response(['error' => 'Unauthorized!'], 401);
     }
 }
 
@@ -52,8 +56,7 @@ function handleRequest(): void
             }
             break;
         default:
-            http_response_code(404);
-            echo json_encode(['error' => 'No route found!']);
+            JsonResponse::response(['error' => 'No route found!'],404);
             break;
     }
 }

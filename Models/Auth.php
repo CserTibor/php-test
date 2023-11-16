@@ -10,10 +10,17 @@ class Auth
 
     private static ?User $instance = null;
 
+    public static function getBearer(): string
+    {
+        $bearer = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+
+        return str_replace("Bearer ", "", $bearer);
+    }
+
     public static function getLoggedInUser(): ?User
     {
         if (self::$instance === null) {
-            $token = getBearer();
+            $token = self::getBearer();
             $db = Connection::getInstance();
             $query = "SELECT users.* FROM users 
                       LEFT JOIN sessions ON sessions.user_id = users.id 
