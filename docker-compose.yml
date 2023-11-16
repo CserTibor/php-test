@@ -1,0 +1,43 @@
+version: "3"
+services:
+
+  php:
+    build: dev-docker/php-fpm
+    container_name: neosoft-be
+    working_dir: /app
+    environment:
+      - XDEBUG_IDE_KEY=PHPSTORM
+      - XDEBUG_DISCOVER_CLIENT_HOST=0
+      - PHP_IDE_CONFIG=serverName=analyst-local
+      #      - XDEBUG_MODE=coverage
+      - XDEBUG_MODE=debug
+      - XDEBUG_START_WITH_REQUEST=yes
+      - XDEBUG_CLIENT_HOST=host.docker.internal
+      - XDEBUG_CLIENT_PORT=9000
+      - WEB_DOCUMENT_ROOT=/app/public
+      - PHP_MEMORY_LIMIT=-1
+    volumes:
+      - .:/app:cached
+    ports:
+      - "3280:80"
+
+  database:
+    image: mysql:8.0.28
+    container_name: neosoft-db
+    command: [
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_unicode_ci',
+      '--authentication_policy=mysql_native_password',
+      '--sort_buffer_size=512K'
+    ]
+    environment:
+      MYSQL_DATABASE: 'neosoft-db'
+      MYSQL_USER: 'neosoft'
+      MYSQL_PASSWORD: 'neosoft'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3506:3306'
+    volumes:
+      - db-data:/var/lib/mysql
+volumes:
+  db-data:
